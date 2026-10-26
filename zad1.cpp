@@ -1,50 +1,45 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 void input_vector(vector<int>& v) {
 	int broj;
 	do {
 		cout << "Unesite broj (0 za kraj): ";
 		cin >> broj;
+
 		if (broj != 0) {
 			v.push_back(broj);
 		}
 	} while (broj != 0);
 }
-void print_vector(const vector<int> &v) {
-	for (int i : v) {
-		cout << i << " ";
-	}
-	cout << endl;
-}
 
 int main() {
 	vector<int> v;
+	int k;
 	input_vector(v);
-	cout << "Vektor: ";
-	print_vector(v);
-	cout << "Vektor obrnutim redoslijedom: ";
-	for (auto i = v.rbegin(); i != v.rend(); ++i) {
-		cout << *i << " ";
+	do {
+		cout << "Unesite k (mora biti ve?i od 0): ";
+		cin >> k;
+	} while (k <= 0);
+
+	auto negativan = [](int x) {return x < 0;};
+	auto visekratnik = [&](int x) {return x % k == 0; };
+
+	int broj_negativnih = count_if(v.begin(), v.end(), negativan);
+	cout << "Broj negativnih brojeva: "<< broj_negativnih << endl;
+	auto prvi_visekratnik = find_if(v.begin(), v.end(), visekratnik);
+	cout << "Prvi visekratnik: " << *prvi_visekratnik<<" (Pozicija: "<< prvi_visekratnik - v.begin() <<")" << endl;
+
+	auto najmanji = min_element(v.begin(), v.end());
+	cout << "Najmanji broj: " << *najmanji <<" (Pozicija: "<< najmanji - v.begin()<<")" << endl;
+
+	auto najveci = max_element(v.begin(), v.end());
+	cout << "Najveci broj: " << *najveci <<" (Pozicija: "<< najveci - v.begin() <<")"<< endl;
+
+	v.erase(remove_if(v.begin(), v.end(), visekratnik), v.end());
+	cout << "Vektor bez visekratnika: ";
+	for (int x : v) {
+		cout << x << " ";
 	}
-	cout << endl;
-
-	vector<int> v1;
-	cout<<endl << "Vektor bez reserve():\n";
-	for (int i = 1; i <= 20; i++) {
-		v1.push_back(i);
-
-		cout << "Nakon push_back: "<< "size = " << v1.size()<< ", capacity = " << v1.capacity() << endl;
-	}
-
-	vector<int> v2;
-	v2.reserve(100);
-	cout<<endl << "Vektor s reserve(100):\n";
-	for (int i = 1; i <= 20; i++) {
-		v2.push_back(i);
-
-		cout << "Nakon push_back: "<< "size = " << v2.size()<< ", capacity = " << v2.capacity() << endl;
-	}
-	v2.shrink_to_fit();
-	cout <<endl<< "Kapacitet nakon fitanja: "<< v2.capacity() << endl;
 }
